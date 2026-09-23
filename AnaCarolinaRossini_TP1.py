@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction
 
 json_path = sys.argv[1] # read file as param 
-# ^^^^^^ the file path needed to be hard-coded on launch.json. This variable takes the first argument as a param.
+# the file path needed to be hard-coded on launch.json. This variable takes the first argument as a param.
 
 try:
     file = open(json_path, encoding="UTF-8") #open file as-is, have info such as size. encoding UTF-8 allows accents and special characters
@@ -24,9 +24,9 @@ number_of_rows = len(data) #set number of rows by how many data blocks there are
 
 
 app = QApplication(sys.argv) #necessary to create the app
-window = QMainWindow() #create the window
-table = QTableWidget() #create table
-window.setCentralWidget(table) #table is centralized
+window = QMainWindow() 
+table = QTableWidget() 
+window.setCentralWidget(table) 
 
 # Set the number of rows and columns and name the columns
 table.setColumnCount(number_of_columns)
@@ -51,7 +51,7 @@ for row in range(number_of_rows):
 # sort when clicking on the columns
 table.setSortingEnabled(True)
 
-
+#create function to search a term in the table
 def search():
      
      text, ok = QInputDialog.getText(
@@ -65,7 +65,7 @@ def search():
             search_found = False
             search_term = table.findItems(text, Qt.MatchFlag.MatchContains) #"MatchContains" is a PySide command that automatically do search and match
 
-            #since Pyside already did it, it's only necessary to highlight if its true and hide if its false
+            #since Pyside already did the search, it's only necessary to highlight if its true and hide if its false
             for item in search_term: 
                     if item.row() == row:
                         search_found = True
@@ -80,14 +80,11 @@ def show_file_info():
     file_size = os.path.getsize(json_path)
     number_of_elements = len(data)
     
-    #here the variable string 'message' is declared
-    message = ( 
+    QMessageBox.information(window, "File Information", ( 
          f"File name: {file_name}\n"
          f"File size: {file_size}\n"
          f"Number of elements: {number_of_elements}\n"
-    )
-
-    QMessageBox.information(window, "File Information", message)
+    ))
 
 
 toolbar = QToolBar()
