@@ -7,7 +7,6 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction
 
 json_path = sys.argv[1] # read file as param 
-# the file path needed to be hard-coded on launch.json. This variable takes the first argument as a param.
 
 try:
     file = open(json_path, encoding="UTF-8") #open file as-is, have info such as size. encoding UTF-8 allows accents and special characters
@@ -16,7 +15,7 @@ except:
     print("Error: Could not open file:", json_path)
     
 
-# Get the column names from the keys
+# Get the column names per keys
 categories = list(data[0].keys())
 
 number_of_columns = len(categories) #set number of columns by the amount of keys
