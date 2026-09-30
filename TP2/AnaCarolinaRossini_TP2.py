@@ -27,7 +27,6 @@ class MainWindow(QWidget):
         layout.addWidget(checkbox_selection)
         layout.addWidget(checkbox_colors)
         layout.addWidget(checkbox_reorder)
-        
 
         #push buttom
         self.button_organize = QPushButton('Organize outliner', self)        
@@ -40,13 +39,15 @@ class MainWindow(QWidget):
        
     def button_onClicked(self):
         json_path = self.text_input.text()
-
         try:
             file = open(json_path, encoding="UTF-8") #open file as-is, have info such as size. encoding UTF-8 allows accents and special characters
             data = json.load(file) #interpret then load file into readeable data
             print("yay!")
         except:
             print("Error: Could not open file:", json_path)
+
+        if self.checkbox_colors is self.checkbox_colors.isChecked():
+            print("colors checked")
 
         
  
