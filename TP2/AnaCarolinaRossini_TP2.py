@@ -52,50 +52,50 @@ class MainWindow(QWidget):
         except:
             print("Error: Could not open file:", json_path)
 
-       
 
-        #verify if the selection checkbox is checked, if so, get the selected objects, otherwise get all objects in the outliner
-        if self.checkbox_selection.isChecked():
-            selected = cmds.ls(selection=True, type="transform", long=True) or []
-            print("selected only")
-        else:
+
+        #open "chunk": records all actions so everything is undone with one CTRL+Z
+        cmds.undoInfo(openChunk=True)
+
+        try:
+            #variable that stores all objects in scene
             objects = cmds.ls(type="transform", long=True) or []
-            print("all objects")
-
-        #verify if colors checkbox is checked, apply colors from the JSON file to the outliner
-        if self.checkbox_colors.isChecked():
-            print("colors checked")
-
-        #same for reorder checkbox
-        if self.checkbox_reorder.isChecked():
-            print("reorder checked")
-
-
-
-
-
-
-
-
-
-                
-
-                
-                
-
-        
-
-
-
-
-
-
-        #if self.checkbox_colors.isChecked():
-        #    print("colors checked")
             
+            #verify if the selection checkbox is checked, get the selected objects
+            if self.checkbox_selection.isChecked():
+                objects = cmds.ls(selection=True, type="transform", long=True) or []
+                print("selected only")
+            else:
+                print("all objects")
 
-        
- 
+            #verify if colors checkbox is checked, apply colors from the JSON file to the outliner
+            if self.checkbox_colors.isChecked():
+                print("colors checked")
+
+                for obj in objects:
+                    obj_name = obj.split("|")[-1]
+
+                    for key, value in json_data.items():
+                        if obj_name.startswith(key):
+                            cmds.setAttr(obj + ".useOutlinerColor", 1) #enable outliner
+                            cmds.setAttr(obj + ".outlinerColor", value[0], value[1], value[2], type="double3") #set RGB from json
+                            print(f"Applied color {value} to {obj}")
+                        
+            #same for reorder checkbox
+            if self.checkbox_reorder.isChecked():
+                print("reorder checked")
+
+
+
+                
+
+                
+
+        finally:
+            cmds.undoInfo(closeChunk=True) #close chunk actions
+            print("Done organizing outliner!")
+
+
 def main():
     
     global widget
@@ -103,3 +103,4 @@ def main():
     widget.show()
  
 main()
+print("AAAAAAAAAAAAAAAAAAAAAAA")
