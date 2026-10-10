@@ -84,6 +84,15 @@ class MainWindow(QWidget):
             #same for reorder checkbox
             if self.checkbox_reorder.isChecked():
                 print("reorder checked")
+                
+                #lambda is a single line function. in this case, it splits the object name by "|" and takes the last part (the actual name) 
+                # and decreases it to sort the objects in ascending order based on their names. 
+                # "sort" only works in python code
+                objects.sort(key=lambda x: x.split("|")[-1]) 
+
+                #rearrange objects in the outliner based on the sorted order
+                for i in objects:
+                    cmds.reorder(i, front= True) #reorder to front
 
 
 
@@ -93,7 +102,6 @@ class MainWindow(QWidget):
 
         finally:
             cmds.undoInfo(closeChunk=True) #close chunk actions
-            print("Done organizing outliner!")
 
 
 def main():
@@ -103,4 +111,3 @@ def main():
     widget.show()
  
 main()
-print("AAAAAAAAAAAAAAAAAAAAAAA")
