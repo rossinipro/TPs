@@ -1,0 +1,70 @@
+import sys
+import json
+import maya.cmds as cmds
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox, QLineEdit, QPushButton, QGroupBox, QHBoxLayout
+
+class MainWindow(QWidget): 
+    def __init__(self): #constructeur
+            super().__init__()  #constructeur Qwidget
+            self.setWindowTitle("Ana Carolina Rossini - TP3 - Random Animation")
+            self.create_ui()
+
+    def create_ui(self):
+            #create main layout
+            layout = QVBoxLayout(self)
+            self.setLayout(layout)
+
+           
+            timing_group = QGroupBox("Animation Timing") #timing group layout
+            timing_layout = QHBoxLayout() #horizontal box inside of timing group layout
+            timing_group.setLayout(timing_layout) #add horizontal box inside the group
+            layout.addWidget(timing_group) #add group to main layout
+
+            
+            
+            #label inside of horizontal box in the timing group layout
+            label = QLabel("THIS IS A TEST")
+            timing_layout.addWidget(label)
+
+            checkbox = QCheckBox("Testing")
+            timing_layout.addWidget(checkbox)
+
+
+
+
+
+
+            
+
+
+"""
+
+#select desired object
+objet = cmds.ls(selection = True)
+
+#erase previous keyframes
+cmds.cutKey(objet, clear=True)
+
+min = 1
+max = 50
+valueend = 50
+
+#set keyframes
+cmds.setKeyframe(objet, attribute="translateY", time=min, value=1)
+cmds.setKeyframe(objet, attribute="translateY", time=(max/2), value=valueend)
+cmds.setKeyframe(objet, attribute="translateY", time=max, value=1)
+
+#control how long the animation will be played
+cmds.playbackOptions(edit=True, min=min, max=max)
+cmds.playbackOptions(edit=True, animationEndTime=max)
+
+"""
+
+
+def main():
+    
+    global widget
+    widget = MainWindow()
+    widget.show()
+ 
+main()
