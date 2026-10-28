@@ -162,7 +162,21 @@ class MainWindow(QWidget):
             layout.addWidget(self.button)
 
     def button_onClicked(self):
-          print("yay!")
+
+        
+
+        cmds.undoInfo(openChunk=True) #open chunk for ctrl+z implementation
+
+        try:
+            objects = cmds.ls(selection=True, type="transform", long=True) or [] #Take only selected objects
+            self.randomAnimation()
+
+        finally:
+            cmds.undoInfo(closeChunk=True) #close chunk for ctrl+z implementation
+
+    def randomAnimation(self):
+        print("Yay!")
+         
 
 
 
