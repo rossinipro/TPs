@@ -1,7 +1,7 @@
 import sys
 import json
 import maya.cmds as cmds
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox, QLineEdit, QPushButton, QGroupBox, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox, QLineEdit, QPushButton, QGroupBox, QHBoxLayout, QSpinBox
 
 class MainWindow(QWidget): 
     def __init__(self): #constructeur
@@ -14,21 +14,155 @@ class MainWindow(QWidget):
             layout = QVBoxLayout(self)
             self.setLayout(layout)
 
-           
+            # --- Animation Timing group ---
             timing_group = QGroupBox("Animation Timing") #timing group layout
             timing_layout = QHBoxLayout() #horizontal box inside of timing group layout
             timing_group.setLayout(timing_layout) #add horizontal box inside the group
             layout.addWidget(timing_group) #add group to main layout
 
-            
-            
+
             #label inside of horizontal box in the timing group layout
-            label = QLabel("THIS IS A TEST")
-            timing_layout.addWidget(label)
+            label_frames_duration = QLabel("Duration (Frames)")
+            timing_layout.addWidget(label_frames_duration)
+            frames_duration = QSpinBox()
+            timing_layout.addWidget(frames_duration)
 
-            checkbox = QCheckBox("Testing")
-            timing_layout.addWidget(checkbox)
+            label_frames_step = QLabel("Step (Frames)")
+            timing_layout.addWidget(label_frames_step)
+            frames_step = QSpinBox()
+            timing_layout.addWidget(frames_step)
 
+
+            # --- Translate Parameters group ---
+            translate_group = QGroupBox("Translate Parameters") 
+            translate_layout = QVBoxLayout()  # create a vertical box
+            translate_group.setLayout(translate_layout) # add vbox into the group
+            translate_layout_min = QHBoxLayout()
+            translate_layout_max = QHBoxLayout()
+            translate_layout.addLayout(translate_layout_min) #add both hbox into the vbox
+            translate_layout.addLayout(translate_layout_max)
+            layout.addWidget(translate_group)
+
+            label_trans_min_X = QLabel("min x: ")
+            translate_layout_min.addWidget(label_trans_min_X)
+            trans_min_X = QSpinBox()
+            translate_layout_min.addWidget(trans_min_X)
+
+            label_trans_min_y = QLabel("min y: ")
+            translate_layout_min.addWidget(label_trans_min_y)
+            trans_min_y = QSpinBox()
+            translate_layout_min.addWidget(trans_min_y)
+
+            label_trans_min_z = QLabel("min z: ")
+            translate_layout_min.addWidget(label_trans_min_z)
+            trans_min_z = QSpinBox()
+            translate_layout_min.addWidget(trans_min_z)
+
+            label_trans_max_X = QLabel("max x: ")
+            translate_layout_max.addWidget(label_trans_max_X)
+            trans_max_X = QSpinBox()
+            translate_layout_max.addWidget(trans_max_X)
+
+            label_trans_max_y = QLabel("max y: ")
+            translate_layout_max.addWidget(label_trans_max_y)
+            trans_max_y = QSpinBox()
+            translate_layout_max.addWidget(trans_max_y)
+            
+            label_trans_max_z = QLabel("max z: ")
+            translate_layout_max.addWidget(label_trans_max_z)
+            trans_max_z = QSpinBox()
+            translate_layout_max.addWidget(trans_max_z)
+
+
+
+
+            # --- Rotate Parameters group ---
+            rotate_group = QGroupBox("Rotate Parameters")
+            rotate_layout = QVBoxLayout()
+            rotate_group.setLayout(rotate_layout)
+            rotate_layout_min = QHBoxLayout()
+            rotate_layout_max = QHBoxLayout()
+            rotate_layout.addLayout(rotate_layout_min)
+            rotate_layout.addLayout(rotate_layout_max)
+            layout.addWidget(rotate_group)
+
+            label_rotate_min_X = QLabel("min x: ")
+            rotate_layout_min.addWidget(label_rotate_min_X)
+            rotate_min_X = QSpinBox()
+            rotate_layout_min.addWidget(rotate_min_X)
+
+            label_rotate_min_y = QLabel("min y: ")
+            rotate_layout_min.addWidget(label_rotate_min_y)
+            rotate_min_y = QSpinBox()
+            rotate_layout_min.addWidget(rotate_min_y)
+
+            label_rotate_min_z = QLabel("min z: ")
+            rotate_layout_min.addWidget(label_rotate_min_z)
+            rotate_min_z = QSpinBox()
+            rotate_layout_min.addWidget(rotate_min_z)
+
+            label_rotate_max_X = QLabel("max x: ")
+            rotate_layout_max.addWidget(label_rotate_max_X)
+            rotate_max_X = QSpinBox()
+            rotate_layout_max.addWidget(rotate_max_X)
+
+            label_rotate_max_y = QLabel("max y: ")
+            rotate_layout_max.addWidget(label_rotate_max_y)
+            rotate_max_y = QSpinBox()
+            rotate_layout_max.addWidget(rotate_max_y)
+            
+            label_rotate_max_z = QLabel("max z: ")
+            rotate_layout_max.addWidget(label_rotate_max_z)
+            rotate_max_z = QSpinBox()
+            rotate_layout_max.addWidget(rotate_max_z)
+
+             # --- Scale Parameters group ---
+            scale_group = QGroupBox("Scale Parameters")
+            scale_layout = QVBoxLayout()
+            scale_group.setLayout(scale_layout)
+            scale_layout_min = QHBoxLayout()
+            scale_layout_max = QHBoxLayout()
+            scale_layout.addLayout(scale_layout_min)
+            scale_layout.addLayout(scale_layout_max)
+            layout.addWidget(scale_group)
+
+            label_scale_min_X = QLabel("min x: ")
+            scale_layout_min.addWidget(label_scale_min_X)
+            scale_min_X = QSpinBox()
+            scale_layout_min.addWidget(scale_min_X)
+
+            label_scale_min_y = QLabel("min y: ")
+            scale_layout_min.addWidget(label_scale_min_y)
+            scale_min_y = QSpinBox()
+            scale_layout_min.addWidget(scale_min_y)
+
+            label_scale_min_z = QLabel("min z: ")
+            scale_layout_min.addWidget(label_scale_min_z)
+            scale_min_z = QSpinBox()
+            scale_layout_min.addWidget(scale_min_z)
+
+            label_scale_max_X = QLabel("max x: ")
+            scale_layout_max.addWidget(label_scale_max_X)
+            scale_max_X = QSpinBox()
+            scale_layout_max.addWidget(scale_max_X)
+
+            label_scale_max_y = QLabel("max y: ")
+            scale_layout_max.addWidget(label_scale_max_y)
+            scale_max_y = QSpinBox()
+            scale_layout_max.addWidget(scale_max_y)
+            
+            label_scale_max_z = QLabel("max z: ")
+            scale_layout_max.addWidget(label_scale_max_z)
+            scale_max_z = QSpinBox()
+            scale_layout_max.addWidget(scale_max_z)
+
+            #Generate button
+            self.button = QPushButton('Generate', self)        
+            self.button.clicked.connect(self.button_onClicked)
+            layout.addWidget(self.button)
+
+    def button_onClicked(self):
+          print("yay!")
 
 
 
