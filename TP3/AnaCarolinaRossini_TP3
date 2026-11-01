@@ -1,3 +1,4 @@
+from random import random
 import sys
 import json
 import maya.cmds as cmds
@@ -25,11 +26,13 @@ class MainWindow(QWidget):
             label_frames_duration = QLabel("Duration (Frames)")
             timing_layout.addWidget(label_frames_duration)
             frames_duration = QSpinBox()
+            frames_duration.setRange(1, 1000)
             timing_layout.addWidget(frames_duration)
 
             label_frames_step = QLabel("Step (Frames)")
             timing_layout.addWidget(label_frames_step)
             frames_step = QSpinBox()
+            frames_step.setRange(1, 1000)
             timing_layout.addWidget(frames_step)
 
 
@@ -46,31 +49,37 @@ class MainWindow(QWidget):
             label_trans_min_X = QLabel("min x: ")
             translate_layout_min.addWidget(label_trans_min_X)
             trans_min_X = QSpinBox()
+            trans_min_X.setRange(-1000, 1000)
             translate_layout_min.addWidget(trans_min_X)
 
             label_trans_min_y = QLabel("min y: ")
             translate_layout_min.addWidget(label_trans_min_y)
             trans_min_y = QSpinBox()
+            trans_min_y.setRange(-1000, 1000)
             translate_layout_min.addWidget(trans_min_y)
 
             label_trans_min_z = QLabel("min z: ")
             translate_layout_min.addWidget(label_trans_min_z)
             trans_min_z = QSpinBox()
+            trans_min_z.setRange(-1000, 1000)
             translate_layout_min.addWidget(trans_min_z)
 
             label_trans_max_X = QLabel("max x: ")
             translate_layout_max.addWidget(label_trans_max_X)
             trans_max_X = QSpinBox()
+            trans_max_X.setRange(-1000, 1000)
             translate_layout_max.addWidget(trans_max_X)
 
             label_trans_max_y = QLabel("max y: ")
             translate_layout_max.addWidget(label_trans_max_y)
             trans_max_y = QSpinBox()
+            trans_max_y.setRange(-1000, 1000)
             translate_layout_max.addWidget(trans_max_y)
             
             label_trans_max_z = QLabel("max z: ")
             translate_layout_max.addWidget(label_trans_max_z)
             trans_max_z = QSpinBox()
+            trans_max_z.setRange(-1000, 1000)
             translate_layout_max.addWidget(trans_max_z)
 
 
@@ -89,31 +98,37 @@ class MainWindow(QWidget):
             label_rotate_min_X = QLabel("min x: ")
             rotate_layout_min.addWidget(label_rotate_min_X)
             rotate_min_X = QSpinBox()
+            rotate_min_X.setRange(-1000, 1000)
             rotate_layout_min.addWidget(rotate_min_X)
 
             label_rotate_min_y = QLabel("min y: ")
             rotate_layout_min.addWidget(label_rotate_min_y)
             rotate_min_y = QSpinBox()
+            rotate_min_y.setRange(-1000, 1000)
             rotate_layout_min.addWidget(rotate_min_y)
 
             label_rotate_min_z = QLabel("min z: ")
             rotate_layout_min.addWidget(label_rotate_min_z)
             rotate_min_z = QSpinBox()
+            rotate_min_z.setRange(-1000, 1000)
             rotate_layout_min.addWidget(rotate_min_z)
 
             label_rotate_max_X = QLabel("max x: ")
             rotate_layout_max.addWidget(label_rotate_max_X)
             rotate_max_X = QSpinBox()
+            rotate_max_X.setRange(-1000, 1000)
             rotate_layout_max.addWidget(rotate_max_X)
 
             label_rotate_max_y = QLabel("max y: ")
             rotate_layout_max.addWidget(label_rotate_max_y)
             rotate_max_y = QSpinBox()
+            rotate_max_y.setRange(-1000, 1000)            
             rotate_layout_max.addWidget(rotate_max_y)
             
             label_rotate_max_z = QLabel("max z: ")
             rotate_layout_max.addWidget(label_rotate_max_z)
             rotate_max_z = QSpinBox()
+            rotate_max_z.setRange(-1000, 1000)
             rotate_layout_max.addWidget(rotate_max_z)
 
              # --- Scale Parameters group ---
@@ -129,31 +144,37 @@ class MainWindow(QWidget):
             label_scale_min_X = QLabel("min x: ")
             scale_layout_min.addWidget(label_scale_min_X)
             scale_min_X = QSpinBox()
+            scale_min_X.setRange(-1000, 1000)
             scale_layout_min.addWidget(scale_min_X)
 
             label_scale_min_y = QLabel("min y: ")
             scale_layout_min.addWidget(label_scale_min_y)
             scale_min_y = QSpinBox()
+            scale_min_y.setRange(-1000, 1000)
             scale_layout_min.addWidget(scale_min_y)
 
             label_scale_min_z = QLabel("min z: ")
             scale_layout_min.addWidget(label_scale_min_z)
             scale_min_z = QSpinBox()
+            scale_min_z.setRange(-1000, 1000)
             scale_layout_min.addWidget(scale_min_z)
 
             label_scale_max_X = QLabel("max x: ")
             scale_layout_max.addWidget(label_scale_max_X)
             scale_max_X = QSpinBox()
+            scale_max_X.setRange(-1000, 1000)
             scale_layout_max.addWidget(scale_max_X)
 
             label_scale_max_y = QLabel("max y: ")
             scale_layout_max.addWidget(label_scale_max_y)
             scale_max_y = QSpinBox()
+            scale_max_y.setRange(-1000, 1000)
             scale_layout_max.addWidget(scale_max_y)
             
             label_scale_max_z = QLabel("max z: ")
             scale_layout_max.addWidget(label_scale_max_z)
             scale_max_z = QSpinBox()
+            scale_max_z.setRange(-1000, 1000)
             scale_layout_max.addWidget(scale_max_z)
 
             #Generate button
@@ -163,50 +184,68 @@ class MainWindow(QWidget):
 
     def button_onClicked(self):
 
-        
-
         cmds.undoInfo(openChunk=True) #open chunk for ctrl+z implementation
 
         try:
             objects = cmds.ls(selection=True, type="transform", long=True) or [] #Take only selected objects
-            self.randomAnimation()
+                #self.randomAnimation(objects)
+                
+            cmds.cutKey(objects, clear=True) #delete previous keyframes for selected objects
+            
+            min_time = 1
+            max_time = self.frames_duration.value()
+            steps = self.frames_step.value()
+    
+            #control how long the animation will be played
+            cmds.playbackOptions(edit=True, min=min_time, max=max_time)
+            cmds.playbackOptions(edit=True, animationEndTime=max_time)
+    
+    
+            #create vectors for min and max values of translate, rotate and scale parameters
+            trans_min = [self.trans_min_X.value(), self.trans_min_y.value(), self.trans_min_z.value()]
+            trans_max = [self.trans_max_X.value(), self.trans_max_y.value(), self.trans_max_z.value()]
+            #make random between min and max
+            trans_random = [random.uniform(trans_min[i], trans_max[i]) for i in range(3)] #for i in range (3) because we have 3 values for x, y and z
+    
+            rotate_min = [self.rotate_min_X.value(), self.rotate_min_y.value(), self.rotate_min_z.value()]
+            rotate_max = [self.rotate_max_X.value(), self.rotate_max_y.value(), self.rotate_max_z.value()]
+            rotate_random = [random.uniform(rotate_min[i], rotate_max[i]) for i in range(3)]
 
-        finally:
+            scale_min = [self.scale_min_X.value(), self.scale_min_y.value(), self.scale_min_z.value()]
+            scale_max = [self.scale_max_X.value(), self.scale_max_y.value(), self.scale_max_z.value()]
+            scale_random = [random.uniform(scale_min[i], scale_max[i]) for i in range(3)]
+    
+            #create keyframes for each object in the selection using the random values generated.
+            #take the steps between the min and max time to create keyframes at each step
+            for t in range(min_time, max_time + 1, steps):
+                for obj in objects:
+                    obj_name = obj.split("|")[-1] #get the name of the object without the path
+
+                    #get initial values of obj
+                    translate_initial = cmds.getAttr(obj + ".translate")[0]
+                    rotate_initial = cmds.getAttr(obj + ".rotate")[0]
+                    scale_initial = cmds.getAttr(obj + ".scale")[0]
+
+                    #the first and last keyframes are set to the initial values of the objects, and the middle keyframe is set to the random values generated
+                    #set keyframe for translate/rotate/scale at min_time with initial value
+                    cmds.setKeyframe(obj, attribute="translate", t=min_time, v=translate_initial) 
+                    cmds.setKeyframe(obj, attribute="rotate", t=min_time, v=rotate_initial)
+                    cmds.setKeyframe(obj, attribute="scale", t=min_time, v=scale_initial)
+
+                    #set keyframe for translate/rotate/scale at middle time with random value
+                    cmds.setKeyframe(obj, attribute="translate", t=(min_time + max_time) / 2, v=trans_random)
+                    cmds.setKeyframe(obj, attribute="rotate", t=(min_time + max_time) / 2, v=rotate_random)
+                    cmds.setKeyframe(obj, attribute="scale", t=(min_time + max_time) / 2, v=scale_random)
+
+                    #set keyframe for translate/rotate/scale at max_time with initial value
+                    cmds.setKeyframe(obj, attribute="translate", t=max_time, v=translate_initial)
+                    cmds.setKeyframe(obj, attribute="rotate", t=max_time, v=rotate_initial)
+                    cmds.setKeyframe(obj, attribute="scale", t=max_time, v=scale_initial) #set keyframe for scale at max_time with initial value
+
+
+        finally: #try:finally: is used to ensure that the code inside the finally block is executed regardless of try block worked or not
             cmds.undoInfo(closeChunk=True) #close chunk for ctrl+z implementation
 
-    def randomAnimation(self):
-        print("Yay!")
-         
-
-
-
-
-
-            
-
-
-"""
-
-#select desired object
-objet = cmds.ls(selection = True)
-
-#erase previous keyframes
-cmds.cutKey(objet, clear=True)
-
-min = 1
-max = 50
-valueend = 50
-
-#set keyframes
-cmds.setKeyframe(objet, attribute="translateY", time=min, value=1)
-cmds.setKeyframe(objet, attribute="translateY", time=(max/2), value=valueend)
-cmds.setKeyframe(objet, attribute="translateY", time=max, value=1)
-
-#control how long the animation will be played
-cmds.playbackOptions(edit=True, min=min, max=max)
-cmds.playbackOptions(edit=True, animationEndTime=max)
-
-"""
 
 
 def main():
