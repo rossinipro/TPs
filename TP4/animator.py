@@ -10,7 +10,7 @@ def ball_animation(UI):
     #cmds.undo() #undo anything that was done before making it again
     selection = cmds.ls(selection=True, transforms=True)
     if not selection:
-        QMessageBox.warning(UI, "Scatter", "Select an object first.")
+        QMessageBox.warning(UI, "Ball Animation", "Select an object first.")
         return
     source = selection[0]
 

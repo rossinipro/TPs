@@ -13,7 +13,7 @@ importlib.reload(UI)
 def main():
     
     global widget
-    widget = UI.MainWindow()
+    widget = UI.BounceBallAnimation()
     widget.show()
  
 main()

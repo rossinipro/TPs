@@ -1,7 +1,7 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QPushButton, QGroupBox, QSpinBox, QSlider, QCheckBox
-from shiboken6 import wrapInstance
-import maya.OpenMayaUI as omui
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QPushButton, QGroupBox, QSpinBox, QSlider, QCheckBox
+from shiboken6 import wrapInstance #used to wrap tool in maya
+import maya.OpenMayaUI as omui
 
 import animator
 import importlib
@@ -10,10 +10,12 @@ importlib.reload(animator)
 
 # Get Maya main window
 def maya_main_window():
-    maya_main_window = omui.MQtUtil.mainWindow()
-    return wrapInstance(int(maya_main_window), QWidget)
+    main_window = omui.MQtUtil.mainWindow()
+    return wrapInstance(int(main_window), QWidget)
 
-class MainWindow(QWidget):
+
+class BounceBallAnimation(QWidget):
+
     def __init__(self):
         super().__init__(maya_main_window())
         self.setWindowFlags(Qt.Window)
@@ -22,39 +24,31 @@ class MainWindow(QWidget):
         self.create_ui()
 
     def create_ui(self):
-        # -- Create Widgerts --
-        self.bounce_height_spinbox, self.bounce_height_slider = self.create_param(1, 100, 10)
-        self.gravity_spinbox, self.gravity_slider = self.create_param(1, 10, 1)
-        self.energy_loss_spinbox, self.energy_loss_slider = self.create_param(0, 100, 20)
+
+        # -- Create Widgets --
+        self.initial_height_spinbox, self.initial_height_slider = self.create_param(1, 100, 10)
+        self.ball_weight_spinbox, self.ball_weight_slider = self.create_param(1, 10, 1)
 
         self.total_frame_spinbox, self.total_frame_slider = self.create_param(1, 1000, 24)
-        self.bounces_spinbox, self.bounces_slider = self.create_param(1, 20, 5)
-
-
 
         self.squash_stretch = QCheckBox("Enable Squash and Stretch")
         self.squash_stretch.setChecked(False)
 
         # Generate button
         self.generate_btn = QPushButton("Generate Bouncy Ball")
-        self.generate_btn.clicked.connect( lambda: animator.ball_animation(self)) #live update
+        self.generate_btn.clicked.connect(lambda: animator.ball_animation(self))
 
-
-        # -- Create Layout --                   
+        # -- Create Layout --
         layout = QVBoxLayout(self)
 
-        physics_group = QGroupBox("Physics Settings")
-        physics_layout = QFormLayout(physics_group)
+        settings_group = QGroupBox("Ball Properties")
+        settings_layout = QFormLayout(settings_group)
 
-        physics_layout.addRow("Bounce height", self.bounce_height_spinbox)
-        physics_layout.addRow("", self.bounce_height_slider)
+        settings_layout.addRow("Initial Height", self.initial_height_spinbox)
+        settings_layout.addRow("", self.initial_height_slider)
 
-        physics_layout.addRow("Gravity", self.gravity_spinbox)
-        physics_layout.addRow("", self.gravity_slider)
-
-        physics_layout.addRow("Energy loss", self.energy_loss_spinbox)
-        physics_layout.addRow("", self.energy_loss_slider)
-
+        settings_layout.addRow("Ball Weight", self.ball_weight_spinbox)
+        settings_layout.addRow("", self.ball_weight_slider)
 
         # Animation settings
         animation_group = QGroupBox("Animation Settings")
@@ -63,28 +57,26 @@ class MainWindow(QWidget):
         animation_layout.addRow("Total frames", self.total_frame_spinbox)
         animation_layout.addRow("", self.total_frame_slider)
 
-        animation_layout.addRow("Number of bounces", self.bounces_spinbox)
-        animation_layout.addRow("", self.bounces_slider)
+        animation_layout.addRow(self.squash_stretch)
 
         # Add everything to main layout
-        layout.addWidget(physics_group)
+        layout.addWidget(settings_group)
         layout.addWidget(animation_group)
         layout.addWidget(self.generate_btn)
 
 
     def create_param(self, rangemin, rangemax, default):
-        self.spinbox = QSpinBox()
-        self.spinbox.setRange(rangemin, rangemax)
-        self.spinbox.setValue(default)
-        #self.spinbox.valueChanged.connect(self.update_values(factor)) #live update
 
-        self.slider = QSlider()
-        self.slider.setOrientation(Qt.Horizontal)
-        self.slider.setRange(rangemin, rangemax)
-        self.slider.setValue(default)
+        spinbox = QSpinBox()
+        spinbox.setRange(rangemin, rangemax)
+        spinbox.setValue(default)
 
-        self.spinbox.valueChanged.connect(self.slider.setValue)
-        self.slider.valueChanged.connect(self.spinbox.setValue)
+        slider = QSlider(Qt.Horizontal)
+        slider.setRange(rangemin, rangemax)
+        slider.setValue(default)
 
-        return self.spinbox, self.slider
+        # Synchronize slider and spinbox
+        spinbox.valueChanged.connect(slider.setValue)
+        slider.valueChanged.connect(spinbox.setValue)
 
+        return spinbox, slider
