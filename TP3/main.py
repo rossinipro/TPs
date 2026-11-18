@@ -12,7 +12,7 @@ importlib.reload(ui)
 def main():
     
     global widget
-    widget = ui.MainWindow()
+    widget = ui.RandomAnimatorTool()
     widget.show()
  
 main()
