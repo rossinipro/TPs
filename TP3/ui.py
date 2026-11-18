@@ -45,54 +45,32 @@ class RandomAnimatorTool(QWidget):
                         setattr(self, "trans_max_" + axis, self.create_spinbox(self.translate_layout_max, -1000, 1000, 10))
 
 
-
-
-
                 # --- Rotate Parameters group ---
                 self.rotate_layout_min, self.rotate_layout_max = self.create_parameter_group("Rotate Parameters", main_layout)
 
-                # Min values
-                self.create_label("min x:", self.rotate_layout_min)
-                self.rotate_min_X = self.create_spinbox(self.rotate_layout_min, -1000, 1000, -10)
+                # Create label and spinbox
+                for axis in ["X", "Y", "Z"]:
+                        #Min Values
+                        self.create_label("min " + axis, self.rotate_layout_min)
+                        setattr(self, "rotate_min_" + axis, self.create_spinbox(self.rotate_layout_min, -1000, 1000, -10))
 
-                self.create_label("min y:", self.rotate_layout_min)
-                self.rotate_min_y = self.create_spinbox(self.rotate_layout_min, -1000, 1000, -10)
+                        # Max values
+                        self.create_label("max " + axis, self.rotate_layout_max)
+                        setattr(self, "rotate_max_" + axis, self.create_spinbox(self.rotate_layout_max, -1000, 1000, 10))
 
-                self.create_label("min z:", self.rotate_layout_min)
-                self.rotate_min_z = self.create_spinbox(self.rotate_layout_min, -1000, 1000, -10)
-
-                # Max values
-                self.create_label("max x:", self.rotate_layout_max)
-                self.rotate_max_X = self.create_spinbox(self.rotate_layout_max, -1000, 1000, 10)
-
-                self.create_label("max y:", self.rotate_layout_max)
-                self.rotate_max_y = self.create_spinbox(self.rotate_layout_max, -1000, 1000, 10)
-
-                self.create_label("max z:", self.rotate_layout_max)
-                self.rotate_max_z = self.create_spinbox(self.rotate_layout_max, -1000, 1000, 10)
 
                 # --- Scale Parameters group ---
                 self.scale_layout_min, self.scale_layout_max = self.create_parameter_group("Scale Parameters", main_layout)
 
-                # Min values
-                self.create_label("min x:", self.scale_layout_min)
-                self.scale_min_X = self.create_spinbox(self.scale_layout_min, -1000, 1000, -10)
+                # Create label and spinbox
+                for axis in ["X", "Y", "Z"]:
+                        #Min Values
+                        self.create_label("min " + axis, self.scale_layout_min)
+                        setattr(self, "scale_min_" + axis, self.create_spinbox(self.scale_layout_min, -1000, 1000, -10))
 
-                self.create_label("min y:", self.scale_layout_min)
-                self.scale_min_y = self.create_spinbox(self.scale_layout_min, -1000, 1000, -10)
-
-                self.create_label("min z:", self.scale_layout_min)
-                self.scale_min_z = self.create_spinbox(self.scale_layout_min, -1000, 1000, -10)
-
-                # Max values
-                self.create_label("max x:", self.scale_layout_max)
-                self.scale_max_X = self.create_spinbox(self.scale_layout_max, -1000, 1000, 10)
-
-                self.create_label("max y:", self.scale_layout_max)
-                self.scale_max_y = self.create_spinbox(self.scale_layout_max, -1000, 1000, 10)
-
-                self.create_label("max z:", self.scale_layout_max)
-                self.scale_max_z = self.create_spinbox(self.scale_layout_max, -1000, 1000, 10)
+                        # Max values
+                        self.create_label("max " + axis, self.scale_layout_max)
+                        setattr(self, "scale_max_" + axis, self.create_spinbox(self.scale_layout_max, -1000, 1000, 10))
 
                 #Generate button
                 self.button = QPushButton('Generate', self)        
@@ -116,14 +94,14 @@ class RandomAnimatorTool(QWidget):
                 self.layout = QVBoxLayout()
                 self.group.setLayout(self.layout)
 
-                layout_min = QHBoxLayout()
-                layout_max = QHBoxLayout()
+                self.layout_min = QHBoxLayout()
+                self.layout_max = QHBoxLayout()
 
-                self.layout.addLayout(layout_min)
-                self.layout.addLayout(layout_max)
+                self.layout.addLayout(self.layout_min)
+                self.layout.addLayout(self.layout_max)
                 main_layout.addWidget(self.group)
 
-                return layout_min, layout_max
+                return self.layout_min, self.layout_max
 
         def button_clicked(self):
                 animator.random_animation(self)

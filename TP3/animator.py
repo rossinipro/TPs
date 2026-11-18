@@ -25,19 +25,19 @@ def random_animation(ui):
 
 
         #create vectors for min and max values of translate, rotate and scale parameters
-        trans_min = [ui.trans_min_X.value(), ui.trans_min_y.value(), ui.trans_min_z.value()]
-        trans_max = [ui.trans_max_X.value(), ui.trans_max_y.value(), ui.trans_max_z.value()]
+        trans_min = [ui.trans_min_X.value(), ui.trans_min_Y.value(), ui.trans_min_Z.value()]
+        trans_max = [ui.trans_max_X.value(), ui.trans_max_Y.value(), ui.trans_max_Z.value()]
     
-        rotate_min = [ui.rotate_min_X.value(), ui.rotate_min_y.value(), ui.rotate_min_z.value()]
-        rotate_max = [ui.rotate_max_X.value(), ui.rotate_max_y.value(), ui.rotate_max_z.value()]
+        rotate_min = [ui.rotate_min_X.value(), ui.rotate_min_Y.value(), ui.rotate_min_Z.value()]
+        rotate_max = [ui.rotate_max_X.value(), ui.rotate_max_Y.value(), ui.rotate_max_Z.value()]
 
-        scale_min = [ui.scale_min_X.value(), ui.scale_min_y.value(), ui.scale_min_z.value()]
-        scale_max = [ui.scale_max_X.value(), ui.scale_max_y.value(), ui.scale_max_z.value()]
+        scale_min = [ui.scale_min_X.value(), ui.scale_min_Y.value(), ui.scale_min_Z.value()]
+        scale_max = [ui.scale_max_X.value(), ui.scale_max_Y.value(), ui.scale_max_Z.value()]
         
 
         #create keyframes for each object in the selection using the random values generated.
         #take the steps between the min and max time to create keyframes at each step
-        for t in range(min_time, max_time + 1, steps):
+        for t in range(min_time + steps, max_time, steps):
             for obj in objects:
                 #make random between min and max
                 trans_random = [random.uniform(trans_min[i], trans_max[i]) for i in range(3)] #for i in range (3) because we have 3 values for x, y and z
