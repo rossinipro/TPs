@@ -65,7 +65,7 @@ def random_animation(ui):
                 for i, axis in enumerate(["X", "Y", "Z"]):
                     cmds.setKeyframe(obj, attribute="translate" + axis, t=max_time, v=translate_initial[i])
                     cmds.setKeyframe(obj, attribute="rotate" + axis, t=max_time, v=rotate_initial[i])
-                    cmds.setKeyframe(obj, attribute="scale" + axis, t=max_time, v=scalex_initial[i])
+                    cmds.setKeyframe(obj, attribute="scale" + axis, t=max_time, v=scale_initial[i])
 
 
     finally: #try:finally: is used to ensure that the code inside the finally block is executed regardless of try block worked or not
