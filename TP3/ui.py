@@ -34,25 +34,16 @@ class RandomAnimatorTool(QWidget):
                 # --- Translate Parameters group ---
                 self.translate_layout_min, self.translate_layout_max = self.create_parameter_group("Translate Parameters", main_layout)
 
-                # Min values
-                self.create_label("min x:", self.translate_layout_min)
-                self.trans_min_X = self.create_spinbox(self.translate_layout_min, -1000, 1000, -10)
+                # Create label and spinbox
+                for axis in ["X", "Y", "Z"]:
+                        #Min Values
+                        self.create_label("min " + axis, self.translate_layout_min)
+                        setattr(self, "trans_min_" + axis, self.create_spinbox(self.translate_layout_min, -1000, 1000, -10))
 
-                self.create_label("min y:", self.translate_layout_min)
-                self.trans_min_y = self.create_spinbox(self.translate_layout_min, -1000, 1000, -10)
+                        # Max values
+                        self.create_label("max " + axis, self.translate_layout_max)
+                        setattr(self, "trans_max_" + axis, self.create_spinbox(self.translate_layout_max, -1000, 1000, 10))
 
-                self.create_label("min z:", self.translate_layout_min)
-                self.trans_min_z = self.create_spinbox(self.translate_layout_min, -1000, 1000, -10)
-
-                # Max values
-                self.create_label("max x:", self.translate_layout_max)
-                self.trans_max_X = self.create_spinbox(self.translate_layout_max, -1000, 1000, 10)
-
-                self.create_label("max y:", self.translate_layout_max)
-                self.trans_max_y = self.create_spinbox(self.translate_layout_max, -1000, 1000, 10)
-
-                self.create_label("max z:", self.translate_layout_max)
-                self.trans_max_z = self.create_spinbox(self.translate_layout_max, -1000, 1000, 10)
 
 
 
