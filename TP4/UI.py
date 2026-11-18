@@ -67,16 +67,18 @@ class BounceBallAnimation(QWidget):
 
     def create_param(self, rangemin, rangemax, default):
 
-        spinbox = QSpinBox()
-        spinbox.setRange(rangemin, rangemax)
-        spinbox.setValue(default)
+        self.spinbox = QSpinBox()
+        self.spinbox.setRange(rangemin, rangemax)
+        self.spinbox.setValue(default)
 
-        slider = QSlider(Qt.Horizontal)
-        slider.setRange(rangemin, rangemax)
-        slider.setValue(default)
+        self.slider = QSlider(Qt.Horizontal)
+        self.slider.setRange(rangemin, rangemax)
+        self.slider.setValue(default)
 
         # Synchronize slider and spinbox
-        spinbox.valueChanged.connect(slider.setValue)
-        slider.valueChanged.connect(spinbox.setValue)
+        self.spinbox.valueChanged.connect(self.slider.setValue)
+        self.spinbox.valueChanged.connect(lambda: animator.ball_animation(self))
+        self.slider.valueChanged.connect(self.spinbox.setValue)
+        self.slider.valueChanged.connect(lambda: animator.ball_animation(self))
 
-        return spinbox, slider
+        return self.spinbox, self.slider
