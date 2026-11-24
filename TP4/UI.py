@@ -8,6 +8,8 @@ import importlib
 importlib.reload(animator)
 
 
+
+
 # Get Maya main window
 def maya_main_window():
     main_window = omui.MQtUtil.mainWindow()
@@ -28,11 +30,13 @@ class BounceBallAnimation(QWidget):
         # -- Create Widgets --
         self.initial_height_spinbox, self.initial_height_slider = self.create_param(1, 100, 10)
         self.ball_weight_spinbox, self.ball_weight_slider = self.create_param(1, 10, 1)
+        
+        self.horizontal_movement_checkbox = QCheckBox("Add horizontal movement")
+        self.horizontal_movement_checkbox.setChecked(False)
+        self.initial_speed_spinbox, self.initial_speed_slider = self.create_param(1, 100, 50)
 
-        self.total_frame_spinbox, self.total_frame_slider = self.create_param(1, 1000, 24)
-
-        self.squash_stretch = QCheckBox("Enable Squash and Stretch")
-        self.squash_stretch.setChecked(False)
+        self.squash_stretch_checkbox = QCheckBox("Enable Squash and Stretch")
+        self.squash_stretch_checkbox.setChecked(False)
 
         # Generate button
         self.generate_btn = QPushButton("Generate Bouncy Ball")
@@ -54,10 +58,12 @@ class BounceBallAnimation(QWidget):
         animation_group = QGroupBox("Animation Settings")
         animation_layout = QFormLayout(animation_group)
 
-        animation_layout.addRow("Total frames", self.total_frame_spinbox)
-        animation_layout.addRow("", self.total_frame_slider)
+        animation_layout.addRow(self.horizontal_movement_checkbox)
 
-        animation_layout.addRow(self.squash_stretch)
+        animation_layout.addRow("Initial Speed", self.initial_speed_spinbox)
+        animation_layout.addRow("", self.initial_speed_slider)
+
+        animation_layout.addRow(self.squash_stretch_checkbox)
 
         # Add everything to main layout
         layout.addWidget(settings_group)

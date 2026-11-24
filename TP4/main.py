@@ -7,9 +7,6 @@ import UI
 importlib.reload(UI)
 
 
-
-
-
 def main():
     
     global widget

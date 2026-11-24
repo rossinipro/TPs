@@ -8,33 +8,53 @@ importlib.reload(UI)
 
 def ball_animation(UI):
 
-    ball = cmds.ls(selection=True, transforms=True)
-    if not ball:
+    #set total animation time
+    end_frame = 60
+    cmds.playbackOptions(minTime=1, maxTime=end_frame,
+                    animationStartTime=1, animationEndTime=end_frame)
+
+    selected = cmds.ls(selection=True, transforms=True)
+    if not selected:
         QMessageBox.warning(UI, "Ball Animation", "Select an object first.")
         return
-    source = ball[0]
+    
+    # Get values from UI
+    initial_height = UI.initial_height_spinbox.value()
+    ball_weight = UI.ball_weight_spinbox.value()
+    initial_speed = UI.initial_speed_spinbox.value()
+    use_horizontal_movement = UI.horizontal_movement_checkbox.isChecked()
+    use_strech_squash = UI.squash_stretch_checkbox.isChecked()
 
-    cmds.cutKey(ball, clear=True) #delete previous keyframes for selected objects
+
+    cmds.cutKey(selected, clear=True) #delete previous keyframes for selected objects
     cmds.play(forward=True)
-
 
 
     cmds.undoInfo(openChunk=True)
     try:
-        # Get values from UI
-        initial_height = UI.initial_height_spinbox.value()
-        ball_weight = UI.ball_weight_spinbox.value()
-        total_frames = UI.total_frame_spinbox.value()
+        keys = make_keys()
 
+        if use_horizontal_movement:
+            set_translate_keys()
+
+        if use_strech_squash:
+              set_strech_squash_keys()
+
+
+    finally:
+        cmds.undoInfo(closeChunk=True) #close chunk for ctrl+z implementation
+
+    def make_keys():
         height = initial_height
         frame = 1
 
 
         # Initial height keyframe
-        cmds.setKeyframe(ball, attribute="translateY",
-        time=frame, value=height)
+        cmds.setKeyframe(selected, attribute="translateY", time=frame, value=height)
 
-        print("yay!")
 
-    finally:
-        cmds.undoInfo(closeChunk=True) #close chunk for ctrl+z implementation
+    def set_translate_keys():
+        print ("horizontal checked")
+        
+    def set_strech_squash_keys():
+        print ("stretch checked")
