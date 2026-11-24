@@ -6,12 +6,12 @@ import importlib
 import UI
 importlib.reload(UI)
 
-def ball_animation(UI):
+# set total animation time
+end_frame = 60
+cmds.playbackOptions(minTime=1, maxTime=end_frame,
+                animationStartTime=1, animationEndTime=end_frame)
 
-    # set total animation time
-    end_frame = 60
-    cmds.playbackOptions(minTime=1, maxTime=end_frame,
-                    animationStartTime=1, animationEndTime=end_frame)
+def ball_animation(UI):
 
     # get tselected, return error if nothing is selected
     ball = cmds.ls(selection=True, transforms=True)
@@ -52,13 +52,21 @@ def create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, 
     
 
     # initial height keyframe
-    cmds.setKeyframe(ball, attribute="translateY", time=frame, value=initial_height)
+    key_y(ball, frame, initial_height)
 
-    # floor impact
+    # first impact
     frame = impact_frame
-    cmds.setKeyframe(ball, attribute="translateY", time=frame, value=1)
+    key_y(ball, frame, 1)
 
     #bounce
     peak = initial_height * height_after_bounce # make bounce lower
     impact_frame = frame + (impact_frame * height_after_bounce) # make bounce shorter
-    cmds.setKeyframe(ball, attribute="translateY", time=impact_frame, value=peak)
+    key_y(ball, impact_frame, peak)
+
+    if frame <= end_frame:
+        key_y(ball, end_frame, 1)
+
+def key_y(ball, frame_value, height_value):
+    cmds.setKeyframe(ball, attribute="translateY", time=frame_value, value=height_value,
+                     inTangentType="spline", outTangentType="spline")
+ 
