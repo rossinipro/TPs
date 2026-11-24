@@ -14,8 +14,8 @@ def ball_animation(UI):
                     animationStartTime=1, animationEndTime=end_frame)
 
     # get tselected, return error if nothing is selected
-    selected = cmds.ls(selection=True, transforms=True)
-    if not selected:
+    ball = cmds.ls(selection=True, transforms=True)
+    if not ball:
         QMessageBox.warning(UI, "Ball Animation", "Select a polySphere first.")
         return
     
@@ -23,21 +23,15 @@ def ball_animation(UI):
     initial_height = UI.initial_height_spinbox.value()
     ball_weight = UI.ball_weight_spinbox.value()
     initial_speed = UI.initial_speed_spinbox.value()
-    use_horizontal_movement = UI.horizontal_movement_checkbox.isChecked()
-    use_strech_squash = UI.squash_stretch_checkbox.isChecked()
+    use_translate = UI.horizontal_movement_checkbox.isChecked()
+    use_squash = UI.squash_stretch_checkbox.isChecked()
 
     # delete previous keyframes
-    cmds.cutKey(selected, clear=True) 
+    cmds.cutKey(ball, clear=True) 
 
     cmds.undoInfo(openChunk=True)
     try:
-        keys = make_keys(initial_height, ball_weight, initial_speed)
-
-        if use_horizontal_movement:
-            set_translate_keys(selected, keys)
-
-        if use_strech_squash:
-              set_strech_squash_keys(selected, keys)
+        create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, use_translate)
 
     finally:
         cmds.undoInfo(closeChunk=True) #close chunk for ctrl+z implementation
@@ -45,28 +39,26 @@ def ball_animation(UI):
     # play from frame 1
     cmds.play(forward=True)
 
-    def make_keys(height, weight, speed):
-        """ I want a list of frame time, height, kind, strength for the important keys.
-        kind = "start", "peak", "impact", "end"
-        strength = 0.1, how hard the ball hits the floor (used for squash)
-        """
+def create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, use_translate):
 
-        # how much height is kept after each bounce
-        #weight 1 keeps 85% of the height, weight 10 keeps only 22%
-        keep = 0.85 - (weight - 1) * 0.07
+    # how much height is kept after each bounce
+    #weight 1 keeps 85% of the height, weight 10 keeps only 22%
+    height_after_bounce = 0.85 - (ball_weight - 1) * 0.07
+
+    # how many frames the first fall takes.
+    # speed 1 -> 13 frames (slow), speed 10 -> 4 frames (fast)
+    impact_frame = 14
+    frame = 1
     
-        # how many frames the first fall takes.
-        # speed 1 -> 13 frames (slow), speed 10 -> 4 frames (fast)
-        half_time = 14 - speed
-        frame = 1
-        peak = height - keep
 
-        # initial height keyframe
-        cmds.setKeyframe(selected, attribute="translateY", time=frame, value=height)
+    # initial height keyframe
+    cmds.setKeyframe(ball, attribute="translateY", time=frame, value=initial_height)
 
+    # floor impact
+    frame = impact_frame
+    cmds.setKeyframe(ball, attribute="translateY", time=frame, value=1)
 
-    def set_translate_keys(selected, keys):
-        print ("horizontal checked")
-        
-    def set_strech_squash_keys(selected, keys):
-        print ("stretch checked")
+    #bounce
+    peak = initial_height * height_after_bounce # make bounce lower
+    impact_frame = frame + (impact_frame * height_after_bounce) # make bounce shorter
+    cmds.setKeyframe(ball, attribute="translateY", time=impact_frame, value=peak)
