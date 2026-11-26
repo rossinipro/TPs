@@ -32,6 +32,7 @@ def ball_animation(UI):
         cmds.cutKey(ball, clear=True)
         for axis in ("X", "Y", "Z"):
             cmds.setAttr(ball[0] + ".scale" + axis, 1)
+            cmds.setAttr(ball[0] + ".translate" + axis, 1)
         
         stop_frame = create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, use_translate)
 
@@ -57,9 +58,11 @@ def create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, 
     frame = 1
 
     squash_amount = 0.05  - ((ball_weight - 1)-(initial_height - 1)) * 0.05
-    
+    translate_x = 0
 
     # initial height keyframe
+    if use_translate:
+        key_movement(ball, frame, translate_x)
     key_peak(ball, frame, initial_height, use_squash)
 
     # first impact
@@ -67,6 +70,7 @@ def create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, 
     key_impact(ball, frame, squash_amount, use_squash, half_time)
 
     peak = initial_height
+    translate_x = initial_speed
 
     # bounce loop until bounce is too low or too short
     while True:
@@ -88,6 +92,9 @@ def create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, 
 
         stop_frame = max(frame + 2, end_frame)
 
+    translate_x = translate_x + 10
+    if use_translate:
+        key_movement(ball, frame + 2, translate_x)
     return stop_frame
 
 
@@ -107,7 +114,9 @@ def key_scale(ball, frame, scale_y):
     cmds.setKeyframe(ball, attribute="scaleY", time=frame, value=scale_y,
                      inTangentType="flat", outTangentType="flat")
  
-
+def key_movement(ball, frame, translate_x):
+    cmds.setKeyframe(ball, attribute="translateX", time=frame, value=translate_x,
+                    inTangentType="linear", outTangentType="linear")
  
 def key_impact(ball, frame, squash_amount, use_squash, peak):
     key_y(ball, frame, 0, "linear")
