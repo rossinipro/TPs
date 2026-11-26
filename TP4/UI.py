@@ -30,10 +30,10 @@ class BounceBallAnimation(QWidget):
         # -- Create Widgets --
         self.initial_height_spinbox, self.initial_height_slider = self.create_param(1, 10, 10)
         self.ball_weight_spinbox, self.ball_weight_slider = self.create_param(1, 10, 1)
-        
+        self.initial_speed_spinbox, self.initial_speed_slider = self.create_param(1, 10, 1)
+
         self.horizontal_movement_checkbox = QCheckBox("Add horizontal movement")
         self.horizontal_movement_checkbox.setChecked(False)
-        self.initial_speed_spinbox, self.initial_speed_slider = self.create_param(1, 10, 1)
         self.horizontal_movement_checkbox.clicked.connect(lambda: animator.ball_animation(self))
 
         self.squash_stretch_checkbox = QCheckBox("Enable Squash and Stretch")
@@ -45,7 +45,7 @@ class BounceBallAnimation(QWidget):
         self.generate_btn.clicked.connect(lambda: animator.ball_animation(self))
 
         # -- Create Layout --
-        layout = QVBoxLayout(self)
+        main_layout = QVBoxLayout(self)
 
         settings_group = QGroupBox("Ball Properties")
         settings_layout = QFormLayout(settings_group)
@@ -56,21 +56,22 @@ class BounceBallAnimation(QWidget):
         settings_layout.addRow("Ball Weight", self.ball_weight_spinbox)
         settings_layout.addRow("", self.ball_weight_slider)
 
+        settings_layout.addRow("Initial Speed", self.initial_speed_spinbox)
+        settings_layout.addRow("", self.initial_speed_slider)
+        
         # Animation settings
         animation_group = QGroupBox("Animation Settings")
         animation_layout = QFormLayout(animation_group)
 
         animation_layout.addRow(self.horizontal_movement_checkbox)
 
-        animation_layout.addRow("Initial Speed", self.initial_speed_spinbox)
-        animation_layout.addRow("", self.initial_speed_slider)
 
         animation_layout.addRow(self.squash_stretch_checkbox)
 
         # Add everything to main layout
-        layout.addWidget(settings_group)
-        layout.addWidget(animation_group)
-        layout.addWidget(self.generate_btn)
+        main_layout.addWidget(settings_group)
+        main_layout.addWidget(animation_group)
+        main_layout.addWidget(self.generate_btn)
 
 
     def create_param(self, rangemin, rangemax, default):

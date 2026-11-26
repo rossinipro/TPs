@@ -62,7 +62,7 @@ def create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, 
 
     # initial height keyframe
     if use_translate:
-        key_movement(ball, frame, translate_x)
+        key_movement(ball, frame, translate_x, "linear")
     key_peak(ball, frame, initial_height, use_squash)
 
     # first impact
@@ -74,7 +74,7 @@ def create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, 
 
     # bounce loop until bounce is too low or too short
     while True:
-        peak = peak * height_after_bounce - .23 # make bounce lower
+        peak = peak * (height_after_bounce - (1/3)) # make bounce lower
         half_time = half_time * height_after_bounce # make bounce shorter
         squash_amount = squash_amount * height_after_bounce
         steps_to_peak = int(round(half_time))
@@ -90,33 +90,34 @@ def create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, 
 
         key_impact(ball, frame, squash_amount, use_squash, steps_to_peak)
 
-        stop_frame = max(frame + 2, end_frame)
 
-    translate_x = translate_x + 10
+    stop_frame = max(frame + 2, end_frame)
+    
+    translate_x = translate_x + 20
     if use_translate:
-        key_movement(ball, frame + 2, translate_x)
+        key_movement(ball, frame + 2, translate_x, "flat")
     return stop_frame
-
-
-
-def key_y(ball, frame_value, height_value, intangent):
-    cmds.setKeyframe(ball, attribute="translateY", time=frame_value, value=height_value,
-                     inTangentType=intangent, outTangentType=intangent)
-
-
-def key_peak(ball, frame, y, use_squash):
-    key_y(ball, frame, y, "flat")
-    if use_squash:
-        key_scale(ball, frame, 1.0)
 
 
 def key_scale(ball, frame, scale_y):
     cmds.setKeyframe(ball, attribute="scaleY", time=frame, value=scale_y,
                      inTangentType="flat", outTangentType="flat")
  
-def key_movement(ball, frame, translate_x):
+def key_movement(ball, frame, translate_x,type):
     cmds.setKeyframe(ball, attribute="translateX", time=frame, value=translate_x,
-                    inTangentType="linear", outTangentType="linear")
+                    inTangentType=type, outTangentType=type)
+
+def key_y(ball, frame_value, height_value, intangent):
+    cmds.setKeyframe(ball, attribute="translateY", time=frame_value, value=height_value,
+                     inTangentType=intangent, outTangentType=intangent)
+
+
+
+
+def key_peak(ball, frame, y, use_squash):
+    key_y(ball, frame, y, "flat")
+    if use_squash:
+        key_scale(ball, frame, 1.0)
  
 def key_impact(ball, frame, squash_amount, use_squash, peak):
     key_y(ball, frame, 0, "linear")
@@ -129,10 +130,10 @@ def key_impact(ball, frame, squash_amount, use_squash, peak):
         #if offset > .1:
         key_scale(ball, frame - offset, 1.0) # keep no bounce until it takes velocity
 
-        key_scale(ball, frame - 1, 1 + max(squash_amount/2,0)) # stretch before
+        key_scale(ball, frame - 1, 1 + max(squash_amount/2, 0 )) # stretch before
         key_scale(ball, frame, min(1 - squash_amount, 1))  # squash
 
-        key_scale(ball, frame + 1,1 + max(squash_amount/2,0)) # stretch after
+        key_scale(ball, frame + 1,1 + max(squash_amount/2, 0 )) # stretch after
         if offset > 1 and frame + offset <= end_frame:
             key_scale(ball, frame + offset, 1.0) # returns to no bounce
 
