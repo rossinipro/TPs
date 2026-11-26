@@ -1,15 +1,14 @@
 from PySide6.QtWidgets import QMessageBox
 import maya.cmds as cmds
-import random
+import math
 
 import importlib
 import UI
 importlib.reload(UI)
 
-# set total animation time
+# set total animation time when ball stops
 end_frame = 60
-cmds.playbackOptions(minTime=1, maxTime=end_frame,
-                animationStartTime=1, animationEndTime=end_frame)
+
 
 def ball_animation(UI):
 
@@ -26,17 +25,24 @@ def ball_animation(UI):
     use_translate = UI.horizontal_movement_checkbox.isChecked()
     use_squash = UI.squash_stretch_checkbox.isChecked()
 
-    # delete previous keyframes
-    cmds.cutKey(ball, clear=True) 
 
     cmds.undoInfo(openChunk=True)
-    try:
-        create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, use_translate)
+    try: 
+        # clear previous keys and reset the scale
+        cmds.cutKey(ball, clear=True)
+        for axis in ("X", "Y", "Z"):
+            cmds.setAttr(ball[0] + ".scale" + axis, 1)
+        
+        stop_frame = create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, use_translate)
+
+        cmds.playbackOptions(minTime=1, maxTime=stop_frame,
+            animationStartTime=1, animationEndTime=stop_frame)
 
     finally:
         cmds.undoInfo(closeChunk=True) #close chunk for ctrl+z implementation
 
     # play from frame 1
+    cmds.currentTime(1)
     cmds.play(forward=True)
 
 def create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, use_translate):
@@ -47,26 +53,78 @@ def create_bounce(ball, initial_height, ball_weight, initial_speed, use_squash, 
 
     # how many frames the first fall takes.
     # speed 1 -> 13 frames (slow), speed 10 -> 4 frames (fast)
-    impact_frame = 14
+    half_time = 14 - initial_speed
     frame = 1
+
+    squash_amount = 0.05  - ((ball_weight - 1)-(initial_height - 1)) * 0.05
     
 
     # initial height keyframe
-    key_y(ball, frame, initial_height)
+    key_peak(ball, frame, initial_height, use_squash)
 
     # first impact
-    frame = impact_frame
-    key_y(ball, frame, 1)
+    frame = frame + half_time
+    key_impact(ball, frame, squash_amount, use_squash, half_time)
 
-    #bounce
-    peak = initial_height * height_after_bounce # make bounce lower
-    impact_frame = frame + (impact_frame * height_after_bounce) # make bounce shorter
-    key_y(ball, impact_frame, peak)
+    peak = initial_height
 
-    if frame <= end_frame:
-        key_y(ball, end_frame, 1)
+    # bounce loop until bounce is too low or too short
+    while True:
+        peak = peak * height_after_bounce - .23 # make bounce lower
+        half_time = half_time * height_after_bounce # make bounce shorter
+        squash_amount = squash_amount * height_after_bounce
+        steps_to_peak = int(round(half_time))
 
-def key_y(ball, frame_value, height_value):
+        
+
+        if peak < .5 or steps_to_peak < 2:
+            break
+
+        key_peak(ball, frame + steps_to_peak, peak, use_squash)
+
+        frame = frame + 2 * steps_to_peak
+
+        key_impact(ball, frame, squash_amount, use_squash, steps_to_peak)
+
+        stop_frame = max(frame + 2, end_frame)
+
+    return stop_frame
+
+
+
+def key_y(ball, frame_value, height_value, intangent):
     cmds.setKeyframe(ball, attribute="translateY", time=frame_value, value=height_value,
-                     inTangentType="spline", outTangentType="spline")
+                     inTangentType=intangent, outTangentType=intangent)
+
+
+def key_peak(ball, frame, y, use_squash):
+    key_y(ball, frame, y, "flat")
+    if use_squash:
+        key_scale(ball, frame, 1.0)
+
+
+def key_scale(ball, frame, scale_y):
+    cmds.setKeyframe(ball, attribute="scaleY", time=frame, value=scale_y,
+                     inTangentType="flat", outTangentType="flat")
  
+
+ 
+def key_impact(ball, frame, squash_amount, use_squash, peak):
+    key_y(ball, frame, 0, "linear")
+ 
+    if use_squash:
+        #if squash_amount > .1:
+
+        offset = min(4, peak // 2) # // is used to floor the result. in this case, if peak / 2 returns a decimal, it will be rounded to the next case
+
+        #if offset > .1:
+        key_scale(ball, frame - offset, 1.0) # keep no bounce until it takes velocity
+
+        key_scale(ball, frame - 1, 1 + max(squash_amount/2,0)) # stretch before
+        key_scale(ball, frame, min(1 - squash_amount, 1))  # squash
+
+        key_scale(ball, frame + 1,1 + max(squash_amount/2,0)) # stretch after
+        if offset > 1 and frame + offset <= end_frame:
+            key_scale(ball, frame + offset, 1.0) # returns to no bounce
+
+

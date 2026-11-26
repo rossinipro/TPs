@@ -28,15 +28,17 @@ class BounceBallAnimation(QWidget):
     def create_ui(self):
 
         # -- Create Widgets --
-        self.initial_height_spinbox, self.initial_height_slider = self.create_param(1, 100, 10)
+        self.initial_height_spinbox, self.initial_height_slider = self.create_param(1, 10, 10)
         self.ball_weight_spinbox, self.ball_weight_slider = self.create_param(1, 10, 1)
         
         self.horizontal_movement_checkbox = QCheckBox("Add horizontal movement")
         self.horizontal_movement_checkbox.setChecked(False)
-        self.initial_speed_spinbox, self.initial_speed_slider = self.create_param(1, 100, 50)
+        self.initial_speed_spinbox, self.initial_speed_slider = self.create_param(1, 10, 1)
+        self.horizontal_movement_checkbox.clicked.connect(lambda: animator.ball_animation(self))
 
         self.squash_stretch_checkbox = QCheckBox("Enable Squash and Stretch")
         self.squash_stretch_checkbox.setChecked(False)
+        self.squash_stretch_checkbox.clicked.connect(lambda: animator.ball_animation(self))
 
         # Generate button
         self.generate_btn = QPushButton("Generate Bouncy Ball")
